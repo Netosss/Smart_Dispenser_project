@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import './routes.dart';
 import '../screens/pager.dart';
+import '../widgets/tts_platform.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
@@ -20,6 +21,7 @@ Future<void> main() async {
 class MenuHomePage extends StatelessWidget {
 
   MenuHomePage(){
+    speak("welcome to the smart dispenser app");
     SystemChrome.setPreferredOrientations(
         <DeviceOrientation>[DeviceOrientation.portraitUp]);
   }

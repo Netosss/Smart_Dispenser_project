@@ -5,11 +5,11 @@ class Menu {
     Elmnt(
         id: "1",
         image: "assets/images/screw1.png",
-        name: "Screw 1X4 phillips"),
+        name: "1X4 Screw"),
     Elmnt(
         id: "2",
         image: "assets/images/screw2.png",
-        name: "Screw 2X4"),
+        name: "1X2 Screw"),
   ];
 
   static Elmnt getElementById(id) {

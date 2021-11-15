@@ -11,6 +11,8 @@ import '../widgets/rectangle_indicator.dart';
 import '../widgets/screw_image.dart';
 import '../widgets/item_card.dart';
 import '../widgets/shadows.dart';
+import '../widgets/tts_platform.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:math' as math;
 
 class MenuPager extends StatefulWidget {
@@ -119,6 +121,7 @@ class _MenuPagerState extends State<MenuPager> with TickerProviderStateMixin {
                 ),
                 new ScrewImage(element: element),
                 new CartButton(counter: element.quantity, addToCart: (){
+                  speak("added ${element.quantity} elements from type ${element.id}.");
                   onChangeFoodItem(index, 0, element, true);
                   playAnimation();
                 }),
