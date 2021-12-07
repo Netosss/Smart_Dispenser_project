@@ -85,6 +85,7 @@ while True:
     # Drawing reference lines
     CoordenadaYLinhaEntrada = (height // 2) - OffsetLinhasRef
     CoordenadaYLinhaSaida = (height // 2) + OffsetLinhasRef
+    CoordenadaYLinhaSaida = height - CoordenadaYLinhaEntrada #added by netanel
     cv2.line(Frame, (0, CoordenadaYLinhaEntrada), (width, CoordenadaYLinhaEntrada), (255, 0, 0), 2)
     # cv2.line(Frame, (0, CoordenadaYLinhaSaida), (width, CoordenadaYLinhaSaida), (0, 0, 255), 2)
 
