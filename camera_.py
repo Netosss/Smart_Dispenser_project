@@ -1,12 +1,30 @@
 from imutils.video import VideoStream
 import datetime
 import math
-import cv2.cv2 as cv2
+import cv2 as cv2
 import numpy as np
 import argparse
 import imutils
 import time
 import smtplib
+
+
+
+def ObjectEntrace(y, y_entrace_coordinate, y_exit_coordinate):
+    dif = abs(y - y_entrace_coordinate)
+
+    if (dif <= 2) and (y < y_exit_coordinate):
+        return 1
+    else:
+        return 0
+    
+def ObjectExit(y, y_entrace_coordinate, y_exit_coordinate):
+    dif = abs(y - y_exit_coordinate)
+
+    if ((dif <= 2) and (y > y_entrace_coordinate)):
+        return 1
+    else:
+        return 0
 
 # variaveis globais
 width = 0
@@ -19,24 +37,6 @@ OffsetLinhasRef = 60  # Change these values according to your needs.
 timeout = time.time() + 60 * 1  # 1 minute from now, the program will shutdown, for testing purposes or else.
 
 
-# Verifying if the object is entering the monitored zone.
-def ObjectEntrace(y, y_entrace_coordinate, y_exit_coordinate):
-    dif = abs(y - y_entrace_coordinate)
-
-    if (dif <= 2) and (y < y_exit_coordinate):
-        return 1
-    else:
-        return 0
-
-
-# Verifying if the object is leaving the monitored zone.
-def ObjectExit(y, y_entrace_coordinate, y_exit_coordinate):
-    dif = abs(y - y_exit_coordinate)
-
-    if ((dif <= 2) and (y > y_entrace_coordinate)):
-        return 1
-    else:
-        return 0
 
 
 ap = argparse.ArgumentParser()
@@ -46,7 +46,6 @@ args = vars(ap.parse_args())
 
 camera = VideoStream(usePiCamera=args["picamera"] > 0).start()
 time.sleep(2.0)
-
 PrimeiroFrame = None
 
 # Making some frame reading before considering analysis, the reason is, some cameras may take longer to
@@ -56,7 +55,6 @@ PrimeiroFrame = None
 
 for i in range(0, 20):
     (grabbed, Frame) = camera.read(), camera.read()
-
 while True:
     # Reading first Frame and determining size.
     (grabbed, Frame) = camera.read(), camera.read()
@@ -80,27 +78,26 @@ while True:
     # Makes the dilatation of the binarized frame to eliminate holes, white zones inside the found shapes,
     # this way, detected objects will be considered a black mass, also finds the shapes after dilatation.
     FrameThresh = cv2.dilate(FrameThresh, None, iterations=2)
-    _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # _, cnts, _ = cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts, _= cv2.findContours(FrameThresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     QtdeContornos = 0
-
     # Drawing reference lines
-    CoordenadaYLinhaEntrada = (height / 2) - OffsetLinhasRef
-    CoordenadaYLinhaSaida = (height / 2) + OffsetLinhasRef
+    CoordenadaYLinhaEntrada = (height // 2) - OffsetLinhasRef
+    CoordenadaYLinhaSaida = (height // 2) + OffsetLinhasRef
     cv2.line(Frame, (0, CoordenadaYLinhaEntrada), (width, CoordenadaYLinhaEntrada), (255, 0, 0), 2)
-    cv2.line(Frame, (0, CoordenadaYLinhaSaida), (width, CoordenadaYLinhaSaida), (0, 0, 255), 2)
+    # cv2.line(Frame, (0, CoordenadaYLinhaSaida), (width, CoordenadaYLinhaSaida), (0, 0, 255), 2)
 
     # Wiping found shapes
     for c in cnts:
         # Small shapes are to be ignored.
-        if cv2.contourArea(c) < AreaContornoLimiteMin:
-            continue
+        # if cv2.contourArea(c) < AreaContornoLimiteMin:
+        #     continue
         # For debugging purposes, counts the number of found shapes
         QtdeContornos = QtdeContornos + 1
 
         # Gets the shapes coordinates (A rectangle that involves the object), highlighting it's shape.
         (x, y, w, h) = cv2.boundingRect(c)  # x e y: coordenadas do vertice superior esquerdo
-        # w e h: respectivamente largura e altura do retangulo
 
         cv2.rectangle(Frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
@@ -108,29 +105,20 @@ while True:
         CoordenadaXCentroContorno = (x + x + w) / 2
         CoordenadaYCentroContorno = (y + y + h) / 2
         PontoCentralContorno = (CoordenadaXCentroContorno, CoordenadaYCentroContorno)
-        cv2.circle(Frame, PontoCentralContorno, 1, (0, 0, 0), 5)
+        # cv2.circle(Frame, PontoCentralContorno, 1, (0, 0, 0), 5)
 
         # Tests the intersection of centers from the shapes and the reference lines. This way, it may count
         # which shapes crosses the reference lines.
         if ObjectEntrace(CoordenadaYCentroContorno, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
             ContadorEntradas += 1
-
-        if ObjectExit(CoordenadaYCentroContorno, CoordenadaYLinhaEntrada, CoordenadaYLinhaSaida):
-            ContadorSaidas += 1
-
-        # If needed, uncomment these lines to show framerate.
-        # cv2.imshow("Frame binarizado", FrameThresh)
-        # cv2.waitKey(1);
-        # cv2.imshow("Frame com subtracao de background", FrameDelta)
-        # cv2.waitKey(1);
-
+            
     print("Contornos encontrados: " + str(QtdeContornos))
 
     # Writes on screen the number of people who enters or leaves the watched area.
     cv2.putText(Frame, "Entradas: {}".format(str(ContadorEntradas)), (10, 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (250, 0, 1), 2)
-    cv2.putText(Frame, "Saidas: {}".format(str(ContadorSaidas)), (10, 70),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    # cv2.putText(Frame, "Saidas: {}".format(str(ContadorSaidas)), (10, 70),
+    #             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
     cv2.imshow("Original", Frame)
     key = cv2.waitKey(1) & 0xFF
 
@@ -140,18 +128,10 @@ while True:
     # if key == ord("q"):
     # break
 
-    test = 0
-    if test == 5 or time.time() > timeout:
-        break
-    test = test - 1
-
 # cleanup the camera and close any open windows
-
+# camera.stop_preview()
 # Program writes the count to a file.
 f = open('contagem.txt', 'w')  # File path and it's name with extension, to write to.
 f.write('ContadorEntradas = ' + repr(ContadorEntradas) + '\n')  # Variables to write
-f.write('ContadorSaidas = ' + repr(ContadorSaidas) + '\n')  # Variables to write
 f.close()
-
-#cv2.destroyAllWindows()
 camera.stop()
