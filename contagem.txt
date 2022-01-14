@@ -1,1 +1,1 @@
-ContadorEntradas = 2
+https://linuxconfig.org/how-to-automatically-execute-shell-script-at-startup-boot-on-systemd-linux
