@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO 
 from time import sleep
-
 GPIO.setwarnings(False)
 
 class Motor():
@@ -14,6 +13,9 @@ class Motor():
         GPIO.setup(self.In2, GPIO.OUT)
         self.pwm = GPIO.PWM(Ena, 100)
         self.pwm.start(0)
+        
+    def __del__(self):
+        self.pwm.ChangeDutyCycle(0)
     
     def moveMotor(self, x=55, t=0):
         GPIO.output(self.In1, GPIO.LOW)  
@@ -31,6 +33,14 @@ class Motor():
         #GPIO.cleanup()
         print("stopping engine")
         sleep(t)
+        
+    def PauseMotor(self, x=24):
+        self.pwm.ChangeDutyCycle(0)
+    
+    def ContinueMotor(self, x=30):
+        self.pwm.ChangeDutyCycle(100)
+        sleep(0.3)
+        self.pwm.ChangeDutyCycle(x)
 
 class ServoMotor:
     def __init__(self, ServoIn):
@@ -40,6 +50,12 @@ class ServoMotor:
         self.pwm = GPIO.PWM(self.ServoIn, 50)
         self.pwm.start(0)
     
+    def moveServo(self, power=7.5):
+        self.pwm.ChangeDutyCycle(power)
+        
+    def stopServo(self):
+        self.pwm.ChangeDutyCycle(0)
+
     def SetAngle(self, angle):
         duty = angle / 18 + 2
         GPIO.output(self.ServoIn, True)
