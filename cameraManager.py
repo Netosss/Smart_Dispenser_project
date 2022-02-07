@@ -22,11 +22,11 @@ class Camera():
 		self.counted_ids = []
 		self.iteration_num = 0
 		self.offset_y = 70
-		self.offset_x = 170
+		self.offset_x = 130
 		self.y_start = self.height//2 - self.offset_y
 		self.y_end = self.height//2 + self.offset_y
-		self.x_start = width//2 - self.offset_x - 100
-		self.x_end = width//2 + self.offset_x
+		self.x_start = width//2 - self.offset_x - 69
+		self.x_end = width//2 + self.offset_x 
 		self.id_first_coordinate = {}# key:id, val: coordinate y
 		self.id_curr_coordinate = {}
   
@@ -52,7 +52,7 @@ class Camera():
 			for cnt in contours:
 				#calc Area
 				area = cv2.contourArea(cnt)
-				if area > 200:
+				if area > 1000:	#200
 					# cv2.drawContours(cropped, [cnt], -1, (0,255,0), 2)
 					x, y, w, h = cv2.boundingRect(cnt)
 					# cv2.rectangle(cropped, (x,y), (x+w, y+h), (0,255,0), 3)
@@ -82,7 +82,7 @@ class Camera():
 						self.counted_ids.append(id_out)
 						print("Screw {} was out and made a {} pixeles road.\n".format(id_out, abs(self.id_curr_coordinate[box_id]- self.id_first_coordinate[box_id])))
 						# print(abs(y_start-y_end)) == 140
-						if abs(self.id_curr_coordinate[box_id]- self.id_first_coordinate[box_id]) >= 55:#abs(y_start-y_end)//3:
+						if abs(self.id_curr_coordinate[box_id]- self.id_first_coordinate[box_id]) >= 40:#abs(y_start-y_end)//3:
 							self.curr_count += 1
 
 
