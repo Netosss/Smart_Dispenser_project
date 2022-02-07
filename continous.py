@@ -6,8 +6,8 @@ import atexit
 # atexit.register(GPIO.cleanup)    
 
 GPIO.setmode(GPIO.BCM)  
-GPIO.setup(9, GPIO.OUT, initial=False)  
-p = GPIO.PWM(9,50) #50HZ  
+GPIO.setup(11, GPIO.OUT, initial=False)  
+p = GPIO.PWM(11,50) #50HZ  
 p.start(0)  
 sleep(2)  
 
