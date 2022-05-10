@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1059644042677",
+    "project_id": "smartdispenser-9043d",
+    "storage_bucket": "smartdispenser-9043d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1059644042677:android:b93d8f61af263f3d557dfc",
+        "android_client_info": {
+          "package_name": "com.example.shopping_list"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1059644042677-3k6gu9j7741u52d4r6uvjpp4sru1074c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbV7bOs1P2Wp-O5mFH0F5YT7F3A6glFLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1059644042677-3k6gu9j7741u52d4r6uvjpp4sru1074c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
